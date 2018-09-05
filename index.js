@@ -1,20 +1,45 @@
-const MongoClient=require('mongodb').MongoClient;
+// http://www.openalpr.com/
 
 
-MongoClient.connect('mongodb://localhost:27017/',(err,client)=>{
-    if (err){
-        return console.log('Unable to connect to mongodb server');
+var express=require('express');
+var app=express()
+
+var bodyParser=require('body-parser');
+
+var mongoose = require('mongoose');
+
+mongoose.Promise=global.Promise;
+
+
+mongoose.connect('mongodb://localhost:27017/CarNumberDetails');
+
+
+var Todo=mongoose.model('Details',{
+    details:{
+        type:String
     }
-    console.log('connected')
-    const db=client.db('CarNumberDetails')
-    db.collection('entry').insertOne({
-        name:'Umer'
-    },(err,result)=>{
-        if (err){
-           return console.log('Unable to insert data') 
-        }
-        console.log(JSON.stringify(result.ops,undefined,2))
-    })
-    client.close();
+})
 
+var NewTodo=new Todo({
+    details:'abc'
+})
+
+
+
+app.use(bodyParser.json())
+
+app.post('/post',(req,res)=>{
+        
+        var NewTodo=new Todo({
+            details:JSON.stringify(req.body) 
+        })
+        NewTodo.save().then((doc)=>{
+            res.send(doc)
+        },(e)=>{
+            res.status(400).send(e);
+        })
+});
+
+app.listen(3000,()=>{
+    console.log('Server started on 3000')
 })
