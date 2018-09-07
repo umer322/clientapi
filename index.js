@@ -11,7 +11,7 @@ var mongoose = require('mongoose');
 mongoose.Promise=global.Promise;
 
 
-mongoose.connect('mongodb://localhost:27017/CarNumberDetails');
+mongoose.connect(process.env.MONGODB_URI|| 'mongodb://localhost:27017/CarNumberDetails');
 
 
 var Todo=mongoose.model('Details',{
@@ -40,6 +40,6 @@ app.post('/post',(req,res)=>{
         })
 });
 
-app.listen(3000,()=>{
-    console.log('Server started on 3000')
+app.listen(process.env.PORT || 3000,()=>{
+    console.log('Server started on'+process.env.PORT)
 })
